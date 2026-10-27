@@ -4,9 +4,9 @@ package com.globus.finance.controller;
 import com.globus.finance.dto.FinancialMetrics;
 import com.globus.finance.service.AnalyticsService;
 import com.globus.finance.dto.MonthlyMetrics;
+import com.globus.finance.dto.DailyMetrics;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,10 +26,10 @@ public class DashboardController {
     }
     @GetMapping({"/", "/dashboard"})
     public String dashboard(
-            @RequestParam(defaultValue = "year") String period,
-            @RequestParam(required = false) Integer year,
-            @RequestParam(required = false) Integer month,
-            @RequestParam(required = false) Integer quarter,
+            @RequestParam(name = "period", defaultValue = "year") String period,
+            @RequestParam(name = "year", required = false) Integer year,
+            @RequestParam(name = "month", required = false) Integer month,
+            @RequestParam(name = "quarter", required = false) Integer quarter,
             Model model) {
 
         Long userId = 1L;
@@ -107,25 +107,107 @@ public class DashboardController {
         model.addAttribute("expenses", metrics.expenses());
         model.addAttribute("balance", metrics.balance());
 
-        List<MonthlyMetrics> monthlyMetrics =
-                analyticsService.getMonthlyMetrics(
-                        userId,
-                        selectedYear
-                );
-
-        model.addAttribute(
-                "monthlyIncomes",
-                monthlyMetrics.stream()
-                        .map(MonthlyMetrics::income)
-                        .toList()
+        List<String> monthNames = List.of(
+                "Январь",
+                "Февраль",
+                "Март",
+                "Апрель",
+                "Май",
+                "Июнь",
+                "Июль",
+                "Август",
+                "Сентябрь",
+                "Октябрь",
+                "Ноябрь",
+                "Декабрь"
         );
 
-        model.addAttribute(
-                "monthlyExpenses",
-                monthlyMetrics.stream()
-                        .map(MonthlyMetrics::expenses)
-                        .toList()
-        );
+        model.addAttribute("monthNames", monthNames);
+
+        List<String> chartLabels;
+        List<BigDecimal> chartIncomes;
+        List<BigDecimal> chartExpenses;
+
+        if ("month".equals(period)) {
+
+            // Получаем ежедневную статистику
+            List<DailyMetrics> dailyMetrics =
+                    analyticsService.getDailyMetrics(
+                            userId,
+                            selectedYear,
+                            selectedMonth
+                    );
+
+            // Названия дней: 1, 2, 3 ... 31
+            chartLabels = dailyMetrics.stream()
+                    .map(day -> String.valueOf(
+                            day.date().getDayOfMonth()))
+                    .toList();
+
+            chartIncomes = dailyMetrics.stream()
+                    .map(DailyMetrics::income)
+                    .toList();
+
+            chartExpenses = dailyMetrics.stream()
+                    .map(DailyMetrics::expenses)
+                    .toList();
+
+        } else {
+
+            // Для квартала и года используем месячную статистику
+            List<MonthlyMetrics> monthlyMetrics =
+                    analyticsService.getMonthlyMetrics(
+                            userId,
+                            selectedYear
+                    );
+
+            int firstMonth = startDate.getMonthValue();
+
+            int monthsCount = "quarter".equals(period) ? 3 : 12;
+
+            List<MonthlyMetrics> chartMetrics =
+                    monthlyMetrics.subList(
+                            firstMonth - 1,
+                            firstMonth - 1 + monthsCount
+                    );
+
+            chartLabels = monthNames.subList(
+                    firstMonth - 1,
+                    firstMonth - 1 + monthsCount
+            );
+
+            chartIncomes = chartMetrics.stream()
+                    .map(MonthlyMetrics::income)
+                    .toList();
+
+            chartExpenses = chartMetrics.stream()
+                    .map(MonthlyMetrics::expenses)
+                    .toList();
+        }
+
+// Передаём данные в Thymeleaf
+        model.addAttribute("chartLabels", chartLabels);
+        model.addAttribute("monthlyIncomes", chartIncomes);
+        model.addAttribute("monthlyExpenses", chartExpenses);
+
+
+        String chartTitle = switch (period) {
+            case "month" ->
+                    "Доходы и расходы за " +
+                            monthNames.get(selectedMonth - 1).toLowerCase() +
+                            " " + selectedYear + " года";
+
+            case "quarter" ->
+                    "Доходы и расходы за " +
+                            selectedQuarter + " квартал " +
+                            selectedYear;
+
+            default ->
+                    "Динамика доходов и расходов за " +
+                            selectedYear + " год";
+        };
+
+        model.addAttribute("chartTitle", chartTitle);
 
         model.addAttribute("year", selectedYear);
         model.addAttribute("month", selectedMonth);

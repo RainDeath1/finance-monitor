@@ -1,7 +1,7 @@
 
 package com.globus.finance.service;
 
-
+import com.globus.finance.dto.DailyMetrics;
 import com.globus.finance.dto.MonthlyMetrics;
 import com.globus.finance.dto.FinancialMetrics;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -180,6 +180,83 @@ public class AnalyticsService {
 
         for (MonthlyMetrics row : rows) {
             result.set(row.month() - 1, row);
+        }
+
+        return result;
+    }
+
+    public List<DailyMetrics> getDailyMetrics(
+            Long userId,
+            int year,
+            int month) {
+
+        if (userId == null) {
+            throw new IllegalArgumentException(
+                    "Идентификатор пользователя обязателен");
+        }
+
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.plusMonths(1);
+
+        String sql = """
+            SELECT
+                transaction_date::date AS day,
+
+                COALESCE(SUM(
+                    CASE
+                        WHEN type = 'INCOME'
+                        THEN amount
+                        ELSE 0
+                    END
+                ), 0) AS income,
+
+                COALESCE(SUM(
+                    CASE
+                        WHEN type = 'EXPENSE'
+                        THEN amount
+                        ELSE 0
+                    END
+                ), 0) AS expenses
+
+            FROM transactions
+
+            WHERE user_id = ?
+              AND transaction_date >= ?
+              AND transaction_date < ?
+
+            GROUP BY transaction_date::date
+            ORDER BY day
+            """;
+
+        List<DailyMetrics> rows = jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> new DailyMetrics(
+                        rs.getDate("day").toLocalDate(),
+                        rs.getBigDecimal("income"),
+                        rs.getBigDecimal("expenses")
+                ),
+                userId,
+                startDate,
+                endDate
+        );
+
+        List<DailyMetrics> result = new ArrayList<>();
+
+        int daysInMonth = startDate.lengthOfMonth();
+
+        for (int day = 1; day <= daysInMonth; day++) {
+
+            result.add(new DailyMetrics(
+                    startDate.withDayOfMonth(day),
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO
+            ));
+        }
+
+        for (DailyMetrics row : rows) {
+            int index = row.date().getDayOfMonth() - 1;
+
+            result.set(index, row);
         }
 
         return result;
