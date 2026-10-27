@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Редактирование — Finance Monitor</title>
+    <link rel="stylesheet" th:href="@{/css/finance.css}">
+</head>
+<body>
+
+<main class="container">
+
+    <h1>Finance Monitor</h1>
+
+    <nav>
+        <a th:href="@{/dashboard}">Дашборд</a>
+        <a th:href="@{/transactions}">Транзакции</a>
+        <a th:href="@{/categories}">Категории</a>
+    </nav>
+
+    <section class="panel">
+        <h2>Редактирование транзакции</h2>
+
+        <form th:action="@{/transactions/{id}/edit(id=${transactionId})}"
+              th:object="${transactionForm}"
+              method="post">
+
+            <div class="error"
+                 th:if="${#fields.hasGlobalErrors()}">
+                <p th:each="err : ${#fields.globalErrors()}"
+                   th:text="${err}"></p>
+            </div>
+
+            <div class="field">
+                <label for="type">Тип операции</label>
+
+                <select id="type" th:field="*{type}" required>
+                    <option value="INCOME">Доход</option>
+                    <option value="EXPENSE">Расход</option>
+                </select>
+                <small class="error" th:errors="*{type}"></small>
+            </div>
+
+            <div class="field">
+                <label for="categoryId">Категория</label>
+
+                <select id="categoryId"
+                        th:field="*{categoryId}" required>
+
+                    <option th:each="c : ${categories}"
+                            th:value="${c.id}"
+                            th:text="${c.name}">
+                    </option>
+                </select>
+                <small class="error"
+                       th:errors="*{categoryId}"></small>
+            </div>
+
+            <div class="field">
+                <label for="amount">Сумма (₸)</label>
+
+                <input id="amount"
+                       type="number"
+                       min="0.01"
+                       step="0.01"
+                       th:field="*{amount}"
+                       required>
+                <small class="error" th:errors="*{amount}"></small>
+            </div>
+
+            <div class="field">
+                <label for="transactionDate">Дата</label>
+
+                <input id="transactionDate"
+                       type="date"
+                       th:field="*{transactionDate}"
+                       required>
+                <small class="error"
+                       th:errors="*{transactionDate}"></small>
+            </div>
+
+            <div class="field">
+                <label for="description">Описание</label>
+
+                <textarea id="description"
+                          rows="3"
+                          maxlength="500"
+                          th:field="*{description}"></textarea>
+                <small class="error"
+                       th:errors="*{description}"></small>
+            </div>
+
+            <button type="submit">Сохранить изменения</button>
+
+            <a class="action-link"
+               th:href="@{/transactions}">
+                Отмена
+            </a>
+        </form>
+    </section>
+
+</main>
+
+</body>
+</html>

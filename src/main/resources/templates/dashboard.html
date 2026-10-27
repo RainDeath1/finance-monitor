@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" th:href="@{/css/finance.css}">
+
+    <title>Finance Monitor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 40px;
+        }
+
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            min-width: 180px;
+            box-shadow: 0 2px 8px #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Finance Monitor</h1>
+
+
+<nav>
+    <a th:href="@{/dashboard}">Дашборд</a>
+    <a th:href="@{/transactions}">Транзакции</a>
+    <a th:href="@{/categories}">Категории</a>
+</nav>
+
+<h2>Финансовый дашборд</h2>
+
+<div class="cards">
+    <div class="card">
+        <h3>Доходы</h3>
+        <p><span th:text="${income}">0</span> ₸</p>
+    </div>
+
+    <div class="card">
+        <h3>Расходы</h3>
+        <p><span th:text="${expenses}">0</span> ₸</p>
+    </div>
+
+    <div class="card">
+        <h3>Баланс</h3>
+        <p><span th:text="${balance}">0</span> ₸</p>
+    </div>
+</div>
+<section class="panel">
+
+    <h2>Динамика доходов и расходов за <span th:text="${year}"></span> год</h2>
+
+    <div class="chart-container">
+        <canvas id="monthlyChart"></canvas>
+    </div>
+
+    <noscript>
+        Для отображения графика необходимо включить JavaScript.
+    </noscript>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+
+<script th:inline="javascript">
+
+    const incomes = /*[[${monthlyIncomes}]]*/ [];
+    const expenses = /*[[${monthlyExpenses}]]*/ [];
+
+    const months = [
+        'Январь',
+        'Февраль',
+        'Март',
+        'Апрель',
+        'Май',
+        'Июнь',
+        'Июль',
+        'Август',
+        'Сентябрь',
+        'Октябрь',
+        'Ноябрь',
+        'Декабрь'
+    ];
+
+    const ctx = document.getElementById('monthlyChart');
+
+    new Chart(ctx, {
+        type: 'bar',
+
+        data: {
+            labels: months,
+
+            datasets: [
+                {
+                    label: 'Доходы',
+                    data: incomes,
+                    backgroundColor: 'rgba(34, 197, 94, 0.7)'
+                },
+                {
+                    label: 'Расходы',
+                    data: expenses,
+                    backgroundColor: 'rgba(239, 68, 68, 0.7)'
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Редактирование категории — Finance Monitor</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/finance.css}">
+</head>
+<body>
+
+<main class="container">
+
+    <h1>Finance Monitor</h1>
+
+    <nav>
+        <a th:href="@{/dashboard}">Дашборд</a>
+        <a th:href="@{/transactions}">Транзакции</a>
+        <a th:href="@{/categories}">Категории</a>
+    </nav>
+
+    <section class="panel">
+
+        <h2>Редактирование категории</h2>
+
+        <form th:action="@{/categories/{id}/edit(id=${categoryId})}"
+              th:object="${categoryForm}"
+              method="post">
+
+            <div class="error"
+                 th:if="${#fields.hasGlobalErrors()}">
+
+                <p th:each="err : ${#fields.globalErrors()}"
+                   th:text="${err}"></p>
+            </div>
+
+            <div class="field">
+
+                <label for="name">Название категории</label>
+
+                <input id="name"
+                       type="text"
+                       th:field="*{name}"
+                       maxlength="100"
+                       required>
+
+                <small class="error"
+                       th:errors="*{name}"></small>
+            </div>
+
+            <div class="field">
+
+                <label for="type">Тип категории</label>
+
+                <select id="type"
+                        th:field="*{type}"
+                        required>
+
+                    <option value="INCOME">Доход</option>
+                    <option value="EXPENSE">Расход</option>
+                </select>
+
+                <small class="error"
+                       th:errors="*{type}"></small>
+            </div>
+
+            <button type="submit">
+                Сохранить изменения
+            </button>
+
+            <a class="action-link"
+               th:href="@{/categories}">
+                Отмена
+            </a>
+
+        </form>
+
+    </section>
+
+</main>
+
+</body>
+</html>
