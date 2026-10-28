@@ -16,11 +16,7 @@
 
     <h1>Finance Monitor</h1>
 
-    <nav>
-        <a th:href="@{/dashboard}">Дашборд</a>
-        <a th:href="@{/transactions}">Транзакции</a>
-        <a th:href="@{/categories}">Категории</a>
-    </nav>
+    <nav th:replace="~{fragments/navigation :: navigation}"></nav>
 
     <h2>Финансовые транзакции</h2>
 
