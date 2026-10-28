@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Финансовые отчёты</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/finance.css}">
+</head>
+<body>
+
+<main class="container">
+
+    <h1>Finance Monitor</h1>
+
+    <nav>
+        <a th:href="@{/dashboard}">Дашборд</a>
+        <a th:href="@{/transactions}">Транзакции</a>
+        <a th:href="@{/categories}">Категории</a>
+        <a th:href="@{/reports}">Отчёты</a>
+    </nav>
+
+    <h2>Финансовые отчёты</h2>
+
+    <section class="panel">
+        <h3>Формирование отчёта</h3>
+
+        <p>
+            Выберите период для просмотра финансовой
+            статистики и формирования отчёта.
+        </p>
+
+    </section>
+
+</main>
+
+</body>
+</html>
