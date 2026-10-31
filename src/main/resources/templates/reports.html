@@ -167,6 +167,32 @@
                     value="true">
                 Сформировать отчёт
             </button>
+
+            <div class="field">
+
+                <select id="format" name="format">
+
+                    <option value="xml">
+                        XML (.xml)
+                    </option>
+
+                    <option value="xlsx">
+                        Excel (.xlsx)
+                    </option>
+
+                    <option value="pdf">
+                        PDF (.pdf)
+                    </option>
+
+                </select>
+            </div>
+
+            <button type="submit"
+                    th:formaction="@{/reports/export}"
+                    formmethod="get">
+                Скачать отчёт
+            </button>
+
         </form>
 
     </section>
@@ -208,7 +234,6 @@
 
         </div>
 
-        <!-- Детализация по операциям -->
         <div th:if="${detail == 'transactions'}">
 
             <h3>Детализация операций</h3>
