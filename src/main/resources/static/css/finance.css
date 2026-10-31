@@ -174,3 +174,11 @@ th, td {
 [hidden] {
     display: none !important;
 }
+
+.category-report {
+    margin-top: 30px;
+}
+
+.category-report h3 {
+    margin-bottom: 15px;
+}

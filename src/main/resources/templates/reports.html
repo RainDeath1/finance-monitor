@@ -139,12 +139,34 @@
                        th:value="${dateTo}">
             </div>
 
+            <div class="field">
+                <label for="detail">Детализация</label>
+
+                <select id="detail" name="detail">
+
+                    <option value="transactions"
+                            th:selected="${detail == 'transactions'}">
+                        По операциям
+                    </option>
+
+                    <option value="days"
+                            th:selected="${detail == 'days'}">
+                        По дням
+                    </option>
+
+                    <option value="months"
+                            th:selected="${detail == 'months'}">
+                        По месяцам
+                    </option>
+
+                </select>
+            </div>
+
             <button type="submit"
                     name="generate"
                     value="true">
                 Сформировать отчёт
             </button>
-
         </form>
 
     </section>
@@ -154,7 +176,7 @@
         <p class="error" th:text="${error}"></p>
     </section>
 
-    <!-- Предварительный просмотр -->
+
     <section class="panel" th:if="${report != null}">
 
         <h2 th:text="${report.title()}">
@@ -183,6 +205,155 @@
                     <span th:text="${summary.balance()}">0</span> ₸
                 </p>
             </div>
+
+        </div>
+
+        <!-- Детализация по операциям -->
+        <div th:if="${detail == 'transactions'}">
+
+            <h3>Детализация операций</h3>
+
+            <div class="table-wrapper"
+                 th:if="${transactions != null and !transactions.isEmpty()}">
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Категория</th>
+                        <th>Тип</th>
+                        <th>Сумма</th>
+                        <th>Описание</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="transaction : ${transactions}">
+
+                        <td th:text="${transaction.transactionDate}">
+                            2026-10-25
+                        </td>
+
+                        <td th:text="${transaction.category.name}">
+                            Продукты
+                        </td>
+
+                        <td th:text="${transaction.type.name() == 'INCOME' ? 'Доход' : 'Расход'}">
+                            Расход
+                        </td>
+
+                        <td>
+                            <span th:text="${transaction.amount}">0</span> ₸
+                        </td>
+
+                        <td th:text="${transaction.description != null ? transaction.description : '—'}">
+                            Описание
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <p th:if="${transactions != null and transactions.isEmpty()}">
+                За выбранный период операций не найдено.
+            </p>
+
+        </div>
+
+
+
+        <div th:if="${detail == 'days' or detail == 'months'}">
+
+            <h3 th:text="${detail == 'days' ? 'Детализация по дням' : 'Детализация по месяцам'}">
+                Детализация
+            </h3>
+
+            <div class="table-wrapper"
+                 th:if="${groupedDetails != null and !groupedDetails.isEmpty()}">
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Период</th>
+                        <th>Доходы</th>
+                        <th>Расходы</th>
+                        <th>Баланс</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="row : ${groupedDetails}">
+
+                        <td th:text="${row.label()}">
+                            10.2026
+                        </td>
+
+                        <td>
+                            <span th:text="${row.income()}">0</span> ₸
+                        </td>
+
+                        <td>
+                            <span th:text="${row.expenses()}">0</span> ₸
+                        </td>
+
+                        <td>
+                            <span th:text="${row.balance()}">0</span> ₸
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <p th:if="${groupedDetails != null and groupedDetails.isEmpty()}">
+                За выбранный период операций не найдено.
+            </p>
+
+        </div>
+
+        <div class="category-report">
+
+            <h3>Доходы и расходы по категориям</h3>
+
+            <div class="table-wrapper"
+                 th:if="${categoryDetails != null and !categoryDetails.isEmpty()}">
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Категория</th>
+                        <th>Тип</th>
+                        <th>Сумма</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="row : ${categoryDetails}">
+
+                        <td th:text="${row.category()}">
+                            Продукты
+                        </td>
+
+                        <td th:text="${row.type().name() == 'INCOME' ? 'Доход' : 'Расход'}">
+                            Расход
+                        </td>
+
+                        <td>
+                            <span th:text="${row.amount()}">0</span> ₸
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <p th:if="${categoryDetails != null and categoryDetails.isEmpty()}">
+                За выбранный период операций по категориям не найдено.
+            </p>
 
         </div>
 

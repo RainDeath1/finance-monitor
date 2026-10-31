@@ -1,8 +1,10 @@
 package com.globus.finance.controller;
-
 import com.globus.finance.dto.FinancialMetrics;
 import com.globus.finance.dto.ReportPeriod;
 import com.globus.finance.service.ReportService;
+import com.globus.finance.entity.Transaction;
+import com.globus.finance.dto.ReportDetailRow;
+import com.globus.finance.dto.CategoryReportRow;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -48,12 +50,15 @@ public class ReportPageController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate dateTo,
 
-            @RequestParam(name = "generate", defaultValue = "false")
-            boolean generate,
+            @RequestParam(name = "detail", defaultValue = "transactions")
+            String detail,
 
-            Model model) {
+            @RequestParam(name = "generate", defaultValue = "false")
+            boolean generate, Model model) {
 
         LocalDate today = LocalDate.now();
+
+        model.addAttribute("detail", detail);
 
         int selectedYear =
                 year != null ? year : today.getYear();
@@ -105,6 +110,51 @@ public class ReportPageController {
 
                 model.addAttribute("report", reportPeriod);
                 model.addAttribute("summary", metrics);
+
+                switch (detail) {
+
+                    case "transactions" -> {
+
+                        List<Transaction> transactions =
+                                reportService.getTransactions(
+                                        userId,
+                                        reportPeriod
+                                );
+
+                        model.addAttribute(
+                                "transactions",
+                                transactions
+                        );
+
+                    }
+
+                    case "days", "months" -> {
+
+                        List<ReportDetailRow> groupedDetails =
+                                reportService.getGroupedDetails(
+                                        userId,
+                                        reportPeriod,
+                                        detail
+                                );
+
+                        model.addAttribute(
+                                "groupedDetails",
+                                groupedDetails
+                        );
+                    }
+
+                    default -> throw new IllegalArgumentException(
+                            "Неизвестный тип детализации отчёта"
+                    );
+                }
+
+                List<CategoryReportRow> categoryDetails =
+                        reportService.getCategoryDetails(
+                                userId,
+                                reportPeriod
+                        );
+
+                model.addAttribute("categoryDetails", categoryDetails);
 
             } catch (IllegalArgumentException e) {
 
