@@ -10,12 +10,23 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.globus.finance.repository.UserRepository;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
 @Configuration
 public class SecurityConfig {
 
     @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
     @Order(1)
+
     public SecurityFilterChain apiSecurity(
             HttpSecurity http) throws Exception {
 
@@ -39,15 +50,40 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain webSecurity(
-            HttpSecurity http) throws Exception {
+            HttpSecurity http,
+            UserRepository userRepository) throws Exception {
 
         http
-                .authorizeHttpRequests(auth ->
-                        auth.anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers(
+                                "/login",
+                                "/register",
+                                "/css/**",
+                                "/js/**"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                "/admin",
+                                "/admin/**"
+                        ).hasRole("ADMIN")
+
+                        .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .usernameParameter("email")
+                        .permitAll()
+                )
                 .httpBasic(Customizer.withDefaults());
 
+        http.addFilterBefore(
+                new ActiveAccountFilter(userRepository),
+                AuthorizationFilter.class
+        );
+
         return http.build();
+
     }
 }

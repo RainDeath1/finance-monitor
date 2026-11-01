@@ -1,0 +1,10 @@
+<header xmlns:th="http://www.thymeleaf.org"
+        th:fragment="appHeader"
+        class="app-header">
+
+  <h1>Finance Monitor</h1>
+
+  <div th:replace="~{fragments/account :: account}">
+  </div>
+
+</header>

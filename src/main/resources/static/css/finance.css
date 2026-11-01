@@ -186,3 +186,283 @@ th, td {
 #format {
     margin-top: 15px;
 }
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.app-header h1 {
+    margin: 0;
+}
+
+.account-dropdown {
+    position: relative;
+}
+
+.account-trigger {
+    cursor: pointer;
+    color: #2563eb;
+    font-weight: 600;
+    list-style: none;
+}
+
+.account-trigger::-webkit-details-marker {
+    display: none;
+}
+
+.account-menu {
+    position: absolute;
+    top: 35px;
+    right: 0;
+
+    width: 220px;
+    padding: 15px;
+
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+
+    z-index: 100;
+}
+
+.account-menu-label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.account-email {
+    font-size: 13px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.account-menu hr {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 12px 0;
+}
+
+.account-menu .logout-button {
+    width: 100%;
+    padding: 10px;
+
+    background: transparent;
+    color: #dc2626;
+
+    border: none;
+    border-radius: 6px;
+
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+}
+
+.account-menu .logout-button:hover {
+    background: #fee2e2;
+}
+
+
+/* ==========================
+   ADMIN DASHBOARD
+   ========================== */
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin: 25px 0;
+}
+
+.admin-stat-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.admin-stat-card h3 {
+    margin: 0 0 15px;
+    color: #6b7280;
+    font-size: 15px;
+}
+
+.admin-stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.admin-table-wrapper {
+    overflow-x: auto;
+}
+
+.admin-users-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-users-table th,
+.admin-users-table td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-users-table th {
+    background: #f8fafc;
+    font-weight: 600;
+}
+
+.admin-users-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+
+.role-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.role-admin {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.role-user {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+@media (max-width: 600px) {
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+.account-admin-link {
+    display: block;
+    padding: 10px;
+    margin-top: 10px;
+
+    color: #2563eb;
+    text-decoration: none;
+
+    font-size: 13px;
+    border-radius: 6px;
+}
+
+.account-admin-link:hover {
+    background: #eff6ff;
+}
+
+.admin-role-button {
+    padding: 8px 12px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.admin-role-button:hover {
+    background: #1d4ed8;
+}
+
+.admin-success {
+    color: #15803d;
+    background: #dcfce7;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.admin-error {
+    color: #b91c1c;
+    background: #fee2e2;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-blocked {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-actions form {
+    margin: 0;
+}
+
+.admin-status-button {
+    padding: 8px 12px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.admin-status-button:hover {
+    background: #b91c1c;
+}
+
+
+.admin-status-button.unblock {
+    background: #16a34a;
+}
+
+.admin-status-button.unblock:hover {
+    background: #15803d;
+}
+
+.admin-delete-button {
+    padding: 8px 12px;
+    background: #7f1d1d;
+    color: white;
+
+    border: none;
+    border-radius: 6px;
+
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.admin-delete-button:hover {
+    background: #991b1b;
+}

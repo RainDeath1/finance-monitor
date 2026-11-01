@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Администрирование — Finance Monitor</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/finance.css}">
+</head>
+
+<body>
+
+<main class="container">
+    <div th:replace="~{fragments/header :: appHeader}"></div>
+    <div th:replace="~{fragments/navigation :: navigation}"></div>
+    <h2>Панель администратора</h2>
+
+    <p>
+        Управление пользователями Finance Monitor
+    </p>
+    <div class="admin-stats">
+
+        <div class="admin-stat-card">
+
+            <h3>Всего пользователей</h3>
+
+            <div class="admin-stat-value"
+                 th:text="${totalUsers}">
+                0
+            </div>
+
+        </div>
+
+        <div class="admin-stat-card">
+
+            <h3>Администраторов</h3>
+
+            <div class="admin-stat-value"
+                 th:text="${adminCount}">
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+    <section class="panel">
+
+        <h2>Зарегистрированные пользователи</h2>
+        <p th:if="${successMessage}"
+           class="admin-success"
+           th:text="${successMessage}">
+        </p>
+
+        <p th:if="${errorMessage}"
+           class="admin-error"
+           th:text="${errorMessage}">
+        </p>
+
+
+        <div class="admin-table-wrapper">
+
+            <table class="admin-users-table">
+
+                <thead>
+
+                <tr>
+                    <th>ID</th>
+                    <th>Имя</th>
+                    <th>Email</th>
+                    <th>Роль</th>
+                    <th>Статус</th>
+                    <th>Дата регистрации</th>
+                    <th>Действия</th>
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                <tr th:each="user : ${users}">
+
+                    <td th:text="${user.id}">
+                    </td>
+
+                    <td th:text="${user.name}">
+                    </td>
+
+                    <td th:text="${user.email}">
+                    </td>
+
+                    <td>
+
+                        <span th:class="${user.role.name() == 'ADMIN'
+                                ? 'role-badge role-admin'
+                                : 'role-badge role-user'}"
+                              th:text="${user.role}">
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span th:class="${user.enabled
+                                ? 'status-badge status-active'
+                                : 'status-badge status-blocked'}"
+                              th:text="${user.enabled
+                                ? 'Активен'
+                                : 'Заблокирован'}">
+                        </span>
+
+                    </td>
+
+                    <td th:text="${#temporals.format(
+                            user.registeredAt,
+                            'dd.MM.yyyy HH:mm'
+                        )}">
+                    </td>
+
+                    <td>
+
+                        <span th:if="${user.email == currentUserEmail}">
+                            Это вы
+                        </span>
+
+                        <div class="admin-actions"
+                             th:unless="${user.email == currentUserEmail}">
+
+                            <form th:action="@{/admin/users/{id}/role(id=${user.id})}"
+                                  method="post"
+                                  onsubmit="return confirm('Вы действительно хотите изменить роль пользователя?');">
+
+                                <input type="hidden"
+                                       name="role"
+                                       th:value="${user.role.name() == 'USER'
+                                               ? 'ADMIN'
+                                               : 'USER'}">
+
+                                <button type="submit"
+                                        class="admin-role-button"
+                                        th:text="${user.role.name() == 'USER'
+                                                ? 'Назначить ADMIN'
+                                                : 'Снять права ADMIN'}">
+                                </button>
+
+                            </form>
+
+                            <form th:action="@{/admin/users/{id}/status(id=${user.id})}"
+                                  method="post"
+                                  onsubmit="return confirm('Вы действительно хотите изменить статус пользователя?');">
+
+                                <input type="hidden"
+                                       name="enabled"
+                                       th:value="${!user.enabled}">
+
+                                <button type="submit"
+                                        th:class="${user.enabled
+                                                ? 'admin-status-button'
+                                                : 'admin-status-button unblock'}"
+                                        th:text="${user.enabled
+                                                ? 'Заблокировать'
+                                                : 'Разблокировать'}">
+                                </button>
+
+                            </form>
+
+                            <form th:action="@{/admin/users/{id}/delete(id=${user.id})}"
+                                  method="post"
+                                  th:attr="data-email=${user.email}"
+                                  onsubmit="return confirmUserDelete(this);">
+
+                                <button type="submit"
+                                        class="admin-delete-button">
+                                    Удалить
+                                </button>
+
+                            </form>
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(users)}">
+
+                    <td colspan="7"
+                        style="text-align: center; padding: 20px;">
+                        Пользователи не найдены
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+    </main>
+
+    <script>
+        function confirmUserDelete(form) {
+
+            const email = form.dataset.email;
+
+            const confirmation = prompt(
+                "ВНИМАНИЕ!\n\n" +
+                "Вы собираетесь безвозвратно удалить пользователя:\n" +
+                email + "\n\n" +
+                "Все его транзакции, категории и сохранённые отчёты " +
+                "будут удалены.\n\n" +
+                "Для подтверждения введите email пользователя:"
+            );
+
+            return confirmation !== null
+                && confirmation.trim() === email;
+        }
+    </script>
+</body>
+</html>

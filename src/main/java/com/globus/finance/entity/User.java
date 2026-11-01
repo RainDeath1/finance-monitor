@@ -4,6 +4,7 @@ package com.globus.finance.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -26,6 +27,22 @@ public class User {
 
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 20)
+    private Role role = Role.USER;
+
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled = true;
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     @Column(name = "registered_at", nullable = false)
     private LocalDateTime registeredAt;
@@ -79,4 +96,13 @@ public class User {
     public void setRegisteredAt(LocalDateTime registeredAt) {
         this.registeredAt = registeredAt;
     }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
 }
