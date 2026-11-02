@@ -34,6 +34,11 @@ public class RegistrationController {
         return "register";
     }
 
+    @GetMapping("/registration-pending")
+    public String registrationPendingPage() {
+        return "registration-pending";
+    }
+
     @PostMapping("/register")
     public String register(
             @Valid @ModelAttribute("form") RegistrationForm form,
@@ -48,7 +53,7 @@ public class RegistrationController {
 
             registrationService.register(form);
 
-            return "redirect:/login?registered";
+            return "redirect:/registration-pending";
 
         } catch (IllegalArgumentException e) {
 

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Подтверждение регистрации — Finance Monitor</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/finance.css}">
+</head>
+
+<body>
+
+<main class="container">
+
+    <h1>Finance Monitor</h1>
+
+    <section class="panel">
+
+        <h2>Проверьте электронную почту</h2>
+
+        <p class="admin-success">
+            Регистрация прошла успешно!
+        </p>
+
+        <p>
+            Мы отправили письмо с подтверждением
+            на адрес, указанный при регистрации.
+        </p>
+
+        <p>
+            Перейдите по ссылке из письма,
+            чтобы активировать учётную запись.
+        </p>
+
+        <p>
+            <strong>
+                Пока электронная почта не подтверждена,
+                вход в систему недоступен.
+            </strong>
+        </p>
+
+        <hr>
+
+        <h3>Не получили письмо?</h3>
+
+        <p>
+            Проверьте папку «Спам» или запросите
+            повторную отправку письма.
+        </p>
+
+        <a th:href="@{/resend-verification}"
+           class="admin-audit-link">
+            Отправить письмо повторно
+        </a>
+
+        <p>
+            <a th:href="@{/login}">
+                Вернуться к авторизации
+            </a>
+        </p>
+
+    </section>
+
+</main>
+
+</body>
+</html>

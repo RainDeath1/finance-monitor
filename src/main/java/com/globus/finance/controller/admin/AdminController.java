@@ -3,7 +3,12 @@ package com.globus.finance.controller.admin;
 import com.globus.finance.entity.Role;
 import com.globus.finance.repository.UserRepository;
 import com.globus.finance.service.admin.AdminUserService;
+import com.globus.finance.dto.auth.RegistrationForm;
 
+import jakarta.validation.Valid;
+
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,6 +77,56 @@ public class AdminController {
             boolean enabled,
             LocalDateTime registeredAt
     ) { }
+
+    @PostMapping("/admin/users/create")
+    public String createUser(
+            @Valid @ModelAttribute("form") RegistrationForm form,
+            BindingResult bindingResult,
+            @RequestParam("role") Role role,
+            RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+
+            String errorMessage = bindingResult.getAllErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .filter(message -> message != null)
+                    .findFirst()
+                    .orElse("Проверьте правильность заполнения формы");
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    errorMessage
+            );
+
+            return "redirect:/admin/users/new";
+        }
+
+        try {
+            adminUserService.createUser(form, role);
+
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Пользователь успешно создан!"
+            );
+
+        } catch (IllegalArgumentException ex) {
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    ex.getMessage()
+            );
+            return "redirect:/admin/users/new";
+        }
+
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/admin/users/new")
+    public String newUserPage() {
+        return "admin-user-create";
+    }
+
     @PostMapping("/admin/users/{id}/role")
     public String changeUserRole(
             @PathVariable("id") Long userId,

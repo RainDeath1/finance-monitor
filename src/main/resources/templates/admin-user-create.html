@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Создание пользователя — Finance Monitor</title>
+
+    <link rel="stylesheet" th:href="@{/css/finance.css}">
+</head>
+
+<body>
+
+<main class="container">
+
+    <div th:replace="~{fragments/header :: appHeader}"></div>
+    <div th:replace="~{fragments/navigation :: navigation}"></div>
+
+    <h2>Создание пользователя</h2>
+
+    <p>Регистрация нового пользователя Finance Monitor</p>
+
+    <section class="panel">
+
+        <h2>Данные пользователя</h2>
+
+        <p th:if="${errorMessage}"
+           class="admin-error"
+           th:text="${errorMessage}">
+        </p>
+
+        <form th:action="@{/admin/users/create}"
+              method="post"
+              class="admin-create-form">
+
+            <div class="admin-create-grid">
+
+                <div>
+                    <label for="name">Имя пользователя</label>
+
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           placeholder="Введите имя"
+                           required>
+                </div>
+
+                <div>
+                    <label for="email">Email</label>
+
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           placeholder="user@example.com"
+                           required>
+                </div>
+
+                <div>
+                    <label for="password">Пароль</label>
+
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           autocomplete="new-password"
+                           required>
+                </div>
+
+                <div>
+                    <label for="confirmPassword">
+                        Подтверждение пароля
+                    </label>
+
+                    <input type="password"
+                           id="confirmPassword"
+                           name="confirmPassword"
+                           autocomplete="new-password"
+                           required>
+                </div>
+
+                <div>
+                    <label for="role">Роль пользователя</label>
+
+                    <select id="role" name="role" required>
+                        <option value="USER">USER</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <button type="submit" class="admin-role-button">
+                Создать пользователя
+            </button>
+
+            <a th:href="@{/admin}" style="margin-left: 15px;">
+                Отмена
+            </a>
+
+        </form>
+
+    </section>
+
+</main>
+
+</body>
+</html>

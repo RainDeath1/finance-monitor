@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Журнал действий — Finance Monitor</title>
+
+    <link rel="stylesheet" th:href="@{/css/finance.css}">
+    <link rel="stylesheet" th:href="@{/css/admin-audit.css}">
+</head>
+
+<body>
+
+<main class="container">
+
+    <div th:replace="~{fragments/header :: appHeader}"></div>
+
+    <div th:replace="~{fragments/navigation :: navigation}"></div>
+
+    <div class="audit-page">
+
+    <div class="audit-heading">
+        <div>
+            <h1>Журнал действий администратора</h1>
+            <p>История управления пользователями Finance Monitor</p>
+        </div>
+
+        <a th:href="@{/admin}" class="audit-back-button">
+            ← К пользователям
+        </a>
+    </div>
+
+    <div class="audit-statistics">
+        <span>Всего событий</span>
+        <strong th:text="${totalElements}">0</strong>
+    </div>
+
+    <section class="audit-card">
+
+        <h2>История действий</h2>
+
+        <div th:if="${#lists.isEmpty(auditLogs)}"
+             class="audit-empty">
+            В журнале пока нет записей.
+        </div>
+
+        <div th:unless="${#lists.isEmpty(auditLogs)}"
+             class="audit-table-wrapper">
+
+            <table class="audit-table">
+
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Дата и время</th>
+                    <th>Администратор</th>
+                    <th>Пользователь</th>
+                    <th>Действие</th>
+                    <th>Описание</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr th:each="log : ${auditLogs}">
+
+                    <td th:text="${log.id}"></td>
+
+                    <td th:text="${#temporals.format(
+                            log.createdAt,
+                            'dd.MM.yyyy HH:mm:ss'
+                        )}">
+                    </td>
+
+                    <td th:text="${log.adminEmail}"></td>
+
+                    <td th:text="${log.targetEmail}"></td>
+
+                    <td>
+                        <span class="audit-action"
+                              th:switch="${log.action.name()}">
+
+                            <span th:case="'ROLE_ASSIGNED'">
+                                Назначение ADMIN
+                            </span>
+
+                            <span th:case="'ROLE_REMOVED'">
+                                Снятие ADMIN
+                            </span>
+
+                            <span th:case="'USER_BLOCKED'">
+                                Блокировка
+                            </span>
+
+                            <span th:case="'USER_UNBLOCKED'">
+                                Разблокировка
+                            </span>
+
+                            <span th:case="'USER_CREATED'">
+                                Создание пользователя
+                            </span>
+
+                            <span th:case="'USER_DELETED'">
+                                Удаление пользователя
+                            </span>
+
+                            <span th:case="*"
+                                  th:text="${log.action}">
+                            </span>
+
+                        </span>
+                    </td>
+
+                    <td th:text="${log.details}"></td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="audit-pagination"
+             th:if="${totalPages > 1}">
+
+            <a th:if="${currentPage > 0}"
+               th:href="@{/admin/audit(page=${currentPage - 1})}"
+               class="audit-page-button">
+                ← Назад
+            </a>
+
+            <span th:unless="${currentPage > 0}"
+                  class="audit-page-button disabled">
+                ← Назад
+            </span>
+
+            <span class="audit-page-info">
+                Страница
+                <strong th:text="${currentPage + 1}"></strong>
+                из
+                <strong th:text="${totalPages}"></strong>
+            </span>
+
+            <a th:if="${currentPage + 1 < totalPages}"
+               th:href="@{/admin/audit(page=${currentPage + 1})}"
+               class="audit-page-button">
+                Далее →
+            </a>
+
+            <span th:unless="${currentPage + 1 < totalPages}"
+                  class="audit-page-button disabled">
+                Далее →
+            </span>
+
+        </div>
+
+    </section>
+
+    </div>
+
+</main>
+
+</body>
+</html>

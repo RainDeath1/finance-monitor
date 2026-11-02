@@ -42,7 +42,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
                 .withUsername(user.getEmail())
                 .password(user.getPasswordHash())
                 .roles(user.getRole().name())
-                .disabled(!user.isEnabled())
+                .disabled(!user.isEnabled() || !user.isEmailVerified())
                 .build();
     }
 }

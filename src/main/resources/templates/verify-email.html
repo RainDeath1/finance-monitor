@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="referrer" content="no-referrer">
+
+    <title>Подтверждение email — Finance Monitor</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/finance.css}">
+</head>
+
+<body>
+
+<main class="container">
+
+    <h1>Finance Monitor</h1>
+
+    <section class="panel">
+
+        <h2>Подтверждение электронной почты</h2>
+
+        <p>
+            Подтвердите адрес электронной почты,
+            чтобы завершить регистрацию.
+        </p>
+
+        <div th:if="${error}">
+
+            <p class="admin-error"
+               th:text="${error}">
+            </p>
+
+            <a th:href="@{/login}">
+                Вернуться к авторизации
+            </a>
+
+        </div>
+
+        <div th:if="${success}">
+
+            <p class="admin-success"
+               th:text="${success}">
+            </p>
+
+            <a th:href="@{/login(verified=true)}">
+                Перейти к авторизации
+            </a>
+
+        </div>
+
+        <div th:if="${token != null and error == null and success == null}">
+
+            <form th:action="@{/verify-email}"
+                  method="post">
+
+                <input type="hidden"
+                       name="token"
+                       th:value="${token}">
+
+                <button type="submit">
+                    Подтвердить email
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>

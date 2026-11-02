@@ -2,7 +2,12 @@ package com.globus.finance.service.admin;
 
 import com.globus.finance.entity.Role;
 import com.globus.finance.entity.User;
+import com.globus.finance.repository.PasswordResetTokenRepository;
 import com.globus.finance.repository.UserRepository;
+import com.globus.finance.entity.AdminAuditAction;
+import com.globus.finance.dto.auth.RegistrationForm;
+import com.globus.finance.service.auth.RegistrationService;
+import com.globus.finance.repository.EmailVerificationTokenRepository;
 
 import com.globus.finance.service.CurrentUserService;
 import jakarta.persistence.EntityManager;
@@ -19,15 +24,28 @@ public class AdminUserService {
     private final EntityManager entityManager;
     private final UserRepository userRepository;
     private final CurrentUserService currentUserService;
+    private final AdminAuditService adminAuditService;
+    private final RegistrationService registrationService;
+    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     public AdminUserService(
             UserRepository userRepository,
             CurrentUserService currentUserService,
-            EntityManager entityManager) {
+            EntityManager entityManager,
+            AdminAuditService adminAuditService,
+            RegistrationService registrationService,
+            EmailVerificationTokenRepository emailVerificationTokenRepository,
+            PasswordResetTokenRepository passwordResetTokenRepository) {
 
         this.userRepository = userRepository;
         this.currentUserService = currentUserService;
         this.entityManager = entityManager;
+        this.adminAuditService = adminAuditService;
+        this.registrationService = registrationService;
+        this.emailVerificationTokenRepository = emailVerificationTokenRepository;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
     }
 
     @Transactional
@@ -45,16 +63,17 @@ public class AdminUserService {
         List<User> admins =
                 userRepository.lockUsersByRole(Role.ADMIN);
 
-        boolean isAdmin = admins.stream()
-                .anyMatch(admin ->
+        User currentUser = admins.stream()
+                .filter(admin ->
                         admin.getId().equals(currentUserId)
+                                && admin.isEnabled()
+                )
+                .findFirst()
+                .orElseThrow(() ->
+                        new AccessDeniedException(
+                                "Недостаточно прав для изменения ролей"
+                        )
                 );
-
-        if (!isAdmin) {
-            throw new AccessDeniedException(
-                    "Недостаточно прав для изменения ролей"
-            );
-        }
 
         User targetUser = userRepository
                 .findById(targetUserId)
@@ -64,6 +83,10 @@ public class AdminUserService {
                         )
                 );
 
+        if (targetUser.getRole() == newRole) {
+            return;
+        }
+
         if (targetUserId.equals(currentUserId)
                 && newRole != Role.ADMIN) {
 
@@ -72,18 +95,34 @@ public class AdminUserService {
             );
         }
 
+        long activeAdmins = admins.stream()
+                .filter(User::isEnabled)
+                .count();
+
         if (targetUser.getRole() == Role.ADMIN
+                && targetUser.isEnabled()
                 && newRole == Role.USER
-                && admins.size() <= 1) {
+                && activeAdmins <= 1) {
 
             throw new IllegalArgumentException(
-                    "Нельзя удалить права последнего администратора"
+                    "Нельзя удалить права последнего активного администратора"
             );
         }
 
         targetUser.setRole(newRole);
 
         userRepository.save(targetUser);
+
+        adminAuditService.log(
+                currentUser.getId(),
+                currentUser.getEmail(),
+                targetUser.getId(),
+                targetUser.getEmail(),
+                newRole == Role.ADMIN
+                        ? AdminAuditAction.ROLE_ASSIGNED
+                        : AdminAuditAction.ROLE_REMOVED,
+                "Роль пользователя изменена на " + newRole.name()
+        );
     }
 
     @Transactional
@@ -150,6 +189,19 @@ public class AdminUserService {
         user.setEnabled(enabled);
 
         userRepository.save(user);
+
+        adminAuditService.log(
+                currentUser.getId(),
+                currentUser.getEmail(),
+                user.getId(),
+                user.getEmail(),
+                enabled
+                        ? AdminAuditAction.USER_UNBLOCKED
+                        : AdminAuditAction.USER_BLOCKED,
+                enabled
+                        ? "Пользователь разблокирован"
+                        : "Пользователь заблокирован"
+        );
     }
 
     @Transactional
@@ -210,6 +262,8 @@ public class AdminUserService {
 
         entityManager.flush();
 
+        emailVerificationTokenRepository.deleteAllByUserId(userId);
+
         entityManager.createQuery(
                         "DELETE FROM Transaction t WHERE t.user.id = :userId"
                 )
@@ -228,7 +282,66 @@ public class AdminUserService {
                 .setParameter("userId", userId)
                 .executeUpdate();
 
+        passwordResetTokenRepository.deleteAllByUserId(userId);
+
         userRepository.delete(user);
         userRepository.flush();
+
+        adminAuditService.log(
+                currentUser.getId(),
+                currentUser.getEmail(),
+                user.getId(),
+                user.getEmail(),
+                AdminAuditAction.USER_DELETED,
+                "Пользователь удалён"
+        );
     }
+
+    @Transactional
+    public void createUser(RegistrationForm form, Role role) {
+
+        if (form == null || role == null) {
+            throw new IllegalArgumentException(
+                    "Не указаны данные пользователя или роль"
+            );
+        }
+
+        Long currentUserId =
+                currentUserService.getCurrentUserId();
+
+        User currentUser = userRepository
+                .findById(currentUserId)
+                .orElseThrow(() ->
+                        new AccessDeniedException(
+                                "Текущий пользователь не найден"
+                        )
+                );
+
+        if (currentUser.getRole() != Role.ADMIN
+                || !currentUser.isEnabled()) {
+
+            throw new AccessDeniedException(
+                    "Недостаточно прав для создания пользователей"
+            );
+        }
+
+        User newUser = registrationService.register(form);
+
+        if (role == Role.ADMIN) {
+
+            newUser.setRole(Role.ADMIN);
+
+            userRepository.save(newUser);
+        }
+
+        adminAuditService.log(
+                currentUser.getId(),
+                currentUser.getEmail(),
+                newUser.getId(),
+                newUser.getEmail(),
+                AdminAuditAction.USER_CREATED,
+                "Создан пользователь с ролью " + role.name()
+        );
+    }
+
 }

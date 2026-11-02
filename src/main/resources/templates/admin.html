@@ -19,30 +19,41 @@
     <div th:replace="~{fragments/header :: appHeader}"></div>
     <div th:replace="~{fragments/navigation :: navigation}"></div>
     <h2>Панель администратора</h2>
+    <a th:href="@{/admin/audit}" class="admin-audit-link">
+        📋 Журнал действий
+    </a>
+
+    <a th:href="@{/admin/users/new}" class="admin-audit-link">
+        ➕ Создать пользователя
+    </a>
 
     <p>
         Управление пользователями Finance Monitor
     </p>
     <div class="admin-stats">
 
-        <div class="admin-stat-card">
+        <div class="admin-stats">
 
-            <h3>Всего пользователей</h3>
+            <div class="admin-stat-card">
 
-            <div class="admin-stat-value"
-                 th:text="${totalUsers}">
-                0
+                <h3>Всего пользователей</h3>
+
+                <div class="admin-stat-value"
+                     th:text="${totalUsers}">
+                    0
+                </div>
+
             </div>
 
-        </div>
+            <div class="admin-stat-card">
 
-        <div class="admin-stat-card">
+                <h3>Администраторов</h3>
 
-            <h3>Администраторов</h3>
+                <div class="admin-stat-value"
+                     th:text="${adminCount}">
+                    0
+                </div>
 
-            <div class="admin-stat-value"
-                 th:text="${adminCount}">
-                0
             </div>
 
         </div>

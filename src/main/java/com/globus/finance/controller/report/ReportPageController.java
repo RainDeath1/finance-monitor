@@ -1,10 +1,12 @@
 package com.globus.finance.controller.report;
+
 import com.globus.finance.dto.analytics.FinancialMetrics;
 import com.globus.finance.dto.report.ReportPeriod;
 import com.globus.finance.service.report.ReportService;
 import com.globus.finance.entity.Transaction;
 import com.globus.finance.dto.report.ReportDetailRow;
 import com.globus.finance.dto.report.CategoryReportRow;
+import com.globus.finance.service.CurrentUserService;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -19,9 +21,14 @@ import java.util.List;
 public class ReportPageController {
 
     private final ReportService reportService;
+    private final CurrentUserService currentUserService;
 
-    public ReportPageController(ReportService reportService) {
+    public ReportPageController(
+            ReportService reportService,
+            CurrentUserService currentUserService) {
+
         this.reportService = reportService;
+        this.currentUserService = currentUserService;
     }
 
     @GetMapping("/reports")
@@ -89,7 +96,7 @@ public class ReportPageController {
         if (generate) {
 
             try {
-                Long userId = 1L;
+                Long userId = currentUserService.getCurrentUserId();
 
                 ReportPeriod reportPeriod =
                         reportService.buildPeriod(

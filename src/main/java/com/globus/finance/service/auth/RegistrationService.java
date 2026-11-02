@@ -5,6 +5,7 @@ import com.globus.finance.entity.Role;
 import com.globus.finance.entity.User;
 import com.globus.finance.repository.UserRepository;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,17 +17,24 @@ public class RegistrationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailVerificationService emailVerificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public RegistrationService(
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            EmailVerificationService emailVerificationService,
+            ApplicationEventPublisher eventPublisher) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailVerificationService = emailVerificationService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
-    public void register(RegistrationForm form) {
+    public User register(RegistrationForm form) {
+
         if (!form.password().equals(form.confirmPassword())) {
             throw new IllegalArgumentException(
                     "Пароли не совпадают"
@@ -48,11 +56,24 @@ public class RegistrationService {
         user.setName(form.name().trim());
         user.setEmail(email);
         user.setRole(Role.USER);
+        user.setEnabled(true);
+        user.setEmailVerified(false);
 
         user.setPasswordHash(
                 passwordEncoder.encode(form.password())
         );
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        String rawToken =
+                emailVerificationService.createToken(savedUser);
+
+        eventPublisher.publishEvent(
+                new EmailVerificationRequestedEvent(
+                        savedUser.getEmail(),
+                        rawToken
+                )
+        );
+        return savedUser;
     }
 }

@@ -1,4 +1,3 @@
-
 package com.globus.finance.dto.transaction;
 
 import com.globus.finance.entity.TransactionType;
@@ -8,9 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record TransactionRequest(
-
-        @NotNull
-        Long userId,
 
         @NotNull
         Long categoryId,
@@ -28,6 +24,5 @@ public record TransactionRequest(
         @Size(max = 500)
         String description
 
-)
-{
+) {
 }

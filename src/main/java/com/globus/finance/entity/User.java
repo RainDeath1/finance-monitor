@@ -36,6 +36,12 @@ public class User {
     @Column(name = "enabled", nullable = false)
     private boolean enabled = true;
 
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = false;
+
+    @Column(name = "session_version")
+    private Long sessionVersion = 0L;
+
     public Role getRole() {
         return role;
     }
@@ -105,4 +111,19 @@ public class User {
         this.enabled = enabled;
     }
 
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public long getSessionVersion() {
+        return sessionVersion == null ? 0L : sessionVersion;
+    }
+
+    public void setSessionVersion(long sessionVersion) {
+        this.sessionVersion = sessionVersion;
+    }
 }

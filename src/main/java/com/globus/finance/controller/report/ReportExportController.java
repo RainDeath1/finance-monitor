@@ -9,6 +9,7 @@ import com.globus.finance.service.report.ReportService;
 import com.globus.finance.service.report.export.XmlReportExportService;
 import com.globus.finance.service.report.export.ExcelReportExportService;
 import com.globus.finance.service.report.export.PdfReportExportService;
+import com.globus.finance.service.CurrentUserService;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
@@ -32,16 +33,21 @@ public class ReportExportController {
 
     private final PdfReportExportService pdfExportService;
 
+    private final CurrentUserService currentUserService;
+
     public ReportExportController(
             ReportService reportService,
             XmlReportExportService xmlExportService,
             ExcelReportExportService excelExportService,
-            PdfReportExportService pdfExportService) {
+            PdfReportExportService pdfExportService,
+            CurrentUserService currentUserService) {
+
 
         this.pdfExportService = pdfExportService;
         this.reportService = reportService;
         this.xmlExportService = xmlExportService;
         this.excelExportService = excelExportService;
+        this.currentUserService = currentUserService;
     }
     @GetMapping({"/reports/export", "/reports/export/xml"})
     public ResponseEntity<byte[]> exportReport(
@@ -77,7 +83,7 @@ public class ReportExportController {
             String detail) {
 
         try {
-            Long userId = 1L;
+            Long userId = currentUserService.getCurrentUserId();
 
             LocalDate today = LocalDate.now();
 
