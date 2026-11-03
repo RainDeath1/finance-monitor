@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Доступ запрещён — Finance Monitor</title>
+    <link rel="stylesheet" th:href="@{/css/finance.css}">
+</head>
+<body>
+
+<main class="container">
+
+    <h1>Finance Monitor</h1>
+
+    <section class="panel">
+        <h2>Ошибка 403</h2>
+
+        <p>У вас недостаточно прав для просмотра этой страницы.</p>
+        <p>Обратитесь к администратору, если считаете это ошибкой.</p>
+
+        <a th:href="@{/dashboard}">
+            Вернуться на главную
+        </a>
+    </section>
+
+</main>
+
+</body>
+</html>

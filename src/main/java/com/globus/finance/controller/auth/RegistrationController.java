@@ -31,12 +31,12 @@ public class RegistrationController {
                 new RegistrationForm("", "", "", "")
         );
 
-        return "register";
+        return "auth/register";
     }
 
     @GetMapping("/registration-pending")
     public String registrationPendingPage() {
-        return "registration-pending";
+        return "auth/registration-pending";
     }
 
     @PostMapping("/register")
@@ -46,7 +46,7 @@ public class RegistrationController {
             Model model) {
 
         if (bindingResult.hasErrors()) {
-            return "register";
+            return "auth/register";
         }
 
         try {
@@ -59,7 +59,7 @@ public class RegistrationController {
 
             model.addAttribute("error", e.getMessage());
 
-            return "register";
+            return "auth/register";
         }
     }
 }

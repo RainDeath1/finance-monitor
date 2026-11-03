@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Мой профиль — Finance Monitor</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/finance.css}">
+</head>
+
+<body>
+
+<body>
+
+<main class="container">
+
+    <div th:replace="~{fragments/header :: appHeader}"></div>
+
+    <nav th:replace="~{fragments/navigation :: navigation}"></nav>
+
+    <h2>Настройки профиля</h2>
+
+
+    <section class="panel">
+
+        <h3>Информация об аккаунте</h3>
+
+        <p>
+            <strong>Email:</strong>
+            <span th:text="${user.email}"></span>
+        </p>
+
+        <p>
+            <strong>Дата регистрации:</strong>
+
+            <span th:text="${#temporals.format(
+                    user.registeredAt,
+                    'dd.MM.yyyy HH:mm'
+            )}"></span>
+        </p>
+
+        <p th:if="${success}"
+           class="admin-success"
+           th:text="${success}">
+        </p>
+
+        <p th:if="${error}"
+           class="admin-error"
+           th:text="${error}">
+        </p>
+
+        <h3>Изменить имя</h3>
+
+        <form th:action="@{/profile/name}"
+              method="post">
+
+            <div class="field">
+
+                <label for="name">
+                    Имя пользователя
+                </label>
+
+                <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        th:value="${user.name}"
+                        maxlength="100"
+                        required>
+
+            </div>
+
+            <button type="submit">
+                Сохранить изменения
+            </button>
+
+        </form>
+
+    </section>
+
+    <section class="panel">
+
+        <h3>Изменить пароль</h3>
+
+        <form th:action="@{/profile/password}"
+              method="post">
+
+            <div class="field">
+
+                <label for="currentPassword">
+                    Текущий пароль
+                </label>
+
+                <input
+                        type="password"
+                        id="currentPassword"
+                        name="currentPassword"
+                        autocomplete="current-password"
+                        required>
+
+            </div>
+
+            <div class="field">
+
+                <label for="newPassword">
+                    Новый пароль
+                </label>
+
+                <input
+                        type="password"
+                        id="newPassword"
+                        name="newPassword"
+                        autocomplete="new-password"
+                        minlength="8"
+                        maxlength="72"
+                        required>
+
+            </div>
+
+            <div class="field">
+
+                <label for="confirmPassword">
+                    Повторите новый пароль
+                </label>
+
+                <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        autocomplete="new-password"
+                        minlength="8"
+                        maxlength="72"
+                        required>
+
+            </div>
+
+            <button type="submit">
+                Изменить пароль
+            </button>
+
+        </form>
+
+        <p>
+            После изменения пароля потребуется
+            повторная авторизация.
+        </p>
+
+    </section>
+
+</main>
+
+</body>
+</html>

@@ -49,7 +49,11 @@ public class ReportExportController {
         this.excelExportService = excelExportService;
         this.currentUserService = currentUserService;
     }
-    @GetMapping({"/reports/export", "/reports/export/xml"})
+    @GetMapping({
+            "/reports/export",
+            "/reports/export/xml",
+            "/api/reports/export"
+    })
     public ResponseEntity<byte[]> exportReport(
 
             @RequestParam(name = "period", defaultValue = "month")

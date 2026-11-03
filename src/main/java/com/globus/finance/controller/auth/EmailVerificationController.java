@@ -32,12 +32,12 @@ public class EmailVerificationController {
                     "Отсутствует токен подтверждения"
             );
 
-            return "verify-email";
+            return "auth/verify-email";
         }
 
         model.addAttribute("token", token);
 
-        return "verify-email";
+        return "auth/verify-email";
     }
 
     @PostMapping("/verify-email")
@@ -62,6 +62,6 @@ public class EmailVerificationController {
             );
         }
 
-        return "verify-email";
+        return "auth/verify-email";
     }
 }

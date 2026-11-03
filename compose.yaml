@@ -1,0 +1,23 @@
+name: finance-monitor
+
+services:
+
+  app:
+    image: finance-monitor:local
+
+    container_name: finance-monitor-app
+
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    environment:
+      SPRING_PROFILES_ACTIVE: smtp
+
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5434/finance_db
+
+      APP_BASE_URL: http://localhost:8080
+
+    ports:
+      - "8080:8080"

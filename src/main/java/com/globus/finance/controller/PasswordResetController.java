@@ -45,7 +45,7 @@ public class PasswordResetController {
     @GetMapping("/forgot-password")
     public String forgotPasswordPage() {
 
-        return "forgot-password";
+        return "auth/forgot-password";
     }
 
     @PostMapping("/forgot-password")
@@ -64,7 +64,7 @@ public class PasswordResetController {
 
             model.addAttribute("rateLimited", true);
 
-            return "forgot-password";
+            return "auth/forgot-password";
         }
 
         HttpSession session = request.getSession(true);
@@ -122,12 +122,12 @@ public class PasswordResetController {
                     "Некорректная ссылка восстановления"
             );
 
-            return "reset-password";
+            return "auth/reset-password";
         }
 
         model.addAttribute("token", token);
 
-        return "reset-password";
+        return "auth/reset-password";
     }
 
     @PostMapping("/reset-password")
@@ -146,7 +146,7 @@ public class PasswordResetController {
                     "Пароли не совпадают"
             );
 
-            return "reset-password";
+            return "auth/reset-password";
         }
 
         try {
@@ -167,7 +167,7 @@ public class PasswordResetController {
                     e.getMessage()
             );
 
-            return "reset-password";
+            return "auth/reset-password";
         }
     }
 }

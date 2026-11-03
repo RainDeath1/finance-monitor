@@ -1,42 +1,48 @@
-<div xmlns:th="http://www.thymeleaf.org"
-     th:fragment="account"
-     class="account-dropdown-wrapper"
-     th:if="${currentUserEmail != null}">
+    <div xmlns:th="http://www.thymeleaf.org"
+         th:fragment="account"
+         class="account-dropdown-wrapper"
+         th:if="${currentUserEmail != null}">
 
-    <details class="account-dropdown">
+        <details class="account-dropdown">
 
-        <summary class="account-trigger">
-            👤 <span th:text="${currentUserEmail}"></span> ▾
-        </summary>
+            <summary class="account-trigger">
+                👤 <span th:text="${currentUserEmail}"></span> ▾
+            </summary>
 
-        <div class="account-menu">
+            <div class="account-menu">
 
-            <div class="account-menu-label">
-                Учётная запись
+                <div class="account-menu-label">
+                    Учётная запись
+                </div>
+
+                <div class="account-email"
+                     th:text="${currentUserEmail}">
+                </div>
+
+                <a th:href="@{/profile}"
+                   class="account-admin-link">
+                    👤 Мой профиль
+                </a>
+
+                <a th:if="${currentUserIsAdmin}"
+                   th:href="@{/admin}"
+                   class="account-admin-link">
+
+                    ⚙️ Администрирование
+
+                </a>
+
+
+                <hr>
+
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="logout-button">
+                        🚪 Выйти
+                    </button>
+                </form>
+
             </div>
 
-            <div class="account-email"
-                 th:text="${currentUserEmail}">
-            </div>
+        </details>
 
-            <a th:if="${currentUserIsAdmin}"
-               th:href="@{/admin}"
-               class="account-admin-link">
-
-                ⚙️ Администрирование
-
-            </a>
-
-            <hr>
-
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="logout-button">
-                    🚪 Выйти
-                </button>
-            </form>
-
-        </div>
-
-    </details>
-
-</div>
+    </div>

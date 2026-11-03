@@ -14,6 +14,8 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
+import jakarta.servlet.DispatcherType;
+
 import com.globus.finance.repository.UserRepository;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
@@ -57,8 +59,13 @@ public class SecurityConfig {
         SavedRequestAwareAuthenticationSuccessHandler defaultSuccessHandler =
                 new SavedRequestAwareAuthenticationSuccessHandler();
 
+        defaultSuccessHandler.setDefaultTargetUrl("/dashboard");
+        defaultSuccessHandler.setAlwaysUseDefaultTargetUrl(true);
+
         http
                 .authorizeHttpRequests(auth -> auth
+
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
 
                         .requestMatchers(
                                 "/login",

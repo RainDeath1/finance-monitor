@@ -21,7 +21,7 @@ public class EmailVerificationResendController {
     @GetMapping("/resend-verification")
     public String resendPage() {
 
-        return "resend-verification";
+        return "auth/resend-verification";
     }
 
     @PostMapping("/resend-verification")

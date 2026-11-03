@@ -43,7 +43,7 @@ public class CategoryPageController {
                 categoryService.getAllCategories(userId)
         );
 
-        return "categories";
+        return "category/categories";
     }
 
     @PostMapping
@@ -85,7 +85,7 @@ public class CategoryPageController {
                 categoryService.getAllCategories(userId)
         );
 
-        return "categories";
+        return "category/categories";
     }
 
     @PostMapping("/{id}/delete")
@@ -136,7 +136,7 @@ public class CategoryPageController {
             model.addAttribute("categoryForm", form);
             model.addAttribute("categoryId", id);
 
-            return "category-edit";
+            return "category/category-edit";
 
         } catch (IllegalArgumentException ex) {
 
@@ -187,6 +187,6 @@ public class CategoryPageController {
 
         model.addAttribute("categoryId", id);
 
-        return "category-edit";
+        return "category/category-edit";
     }
 }

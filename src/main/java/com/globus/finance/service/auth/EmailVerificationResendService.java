@@ -49,7 +49,6 @@ public class EmailVerificationResendService {
                 .findByEmail(normalizedEmail)
                 .orElse(null);
 
-        // Не раскрываем, существует ли такой пользователь.
         if (user == null
                 || !user.isEnabled()
                 || user.isEmailVerified()) {

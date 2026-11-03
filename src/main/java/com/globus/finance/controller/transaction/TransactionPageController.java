@@ -44,7 +44,7 @@ public class TransactionPageController {
         model.addAttribute("transactionForm", form);
         loadPageData(model);
 
-        return "transactions";
+        return "transaction/transactions";
     }
 
     @PostMapping
@@ -82,7 +82,7 @@ public class TransactionPageController {
         }
 
         loadPageData(model);
-        return "transactions";
+        return "transaction/transactions";
     }
 
     private void loadPageData(Model model) {
@@ -135,7 +135,7 @@ public class TransactionPageController {
                             currentUserService.getCurrentUserId()
                     ));
 
-            return "transaction-edit";
+            return "transaction/transaction-edit";
 
         } catch (IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute(
@@ -184,7 +184,7 @@ public class TransactionPageController {
                         currentUserService.getCurrentUserId()
                 ));
 
-        return "transaction-edit";
+        return "transaction/transaction-edit";
     }
 
     @PostMapping("/{id}/delete")

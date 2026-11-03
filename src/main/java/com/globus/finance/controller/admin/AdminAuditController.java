@@ -48,6 +48,6 @@ public class AdminAuditController {
         model.addAttribute("totalPages", auditPage.getTotalPages());
         model.addAttribute("totalElements", auditPage.getTotalElements());
 
-        return "admin-audit";
+        return "admin/admin-audit";
     }
 }

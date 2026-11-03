@@ -134,7 +134,6 @@ public class DashboardController {
 
         if ("month".equals(period)) {
 
-            // Получаем ежедневную статистику
             List<DailyMetrics> dailyMetrics =
                     analyticsService.getDailyMetrics(
                             userId,
@@ -142,7 +141,6 @@ public class DashboardController {
                             selectedMonth
                     );
 
-            // Названия дней: 1, 2, 3 ... 31
             chartLabels = dailyMetrics.stream()
                     .map(day -> String.valueOf(
                             day.date().getDayOfMonth()))
@@ -158,7 +156,6 @@ public class DashboardController {
 
         } else {
 
-            // Для квартала и года используем месячную статистику
             List<MonthlyMetrics> monthlyMetrics =
                     analyticsService.getMonthlyMetrics(
                             userId,
@@ -189,7 +186,6 @@ public class DashboardController {
                     .toList();
         }
 
-// Передаём данные в Thymeleaf
         model.addAttribute("chartLabels", chartLabels);
         model.addAttribute("monthlyIncomes", chartIncomes);
         model.addAttribute("monthlyExpenses", chartExpenses);
@@ -218,6 +214,6 @@ public class DashboardController {
         model.addAttribute("quarter", selectedQuarter);
         model.addAttribute("period", period);
 
-        return "dashboard";
+        return "dashboard/dashboard";
     }
 }

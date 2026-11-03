@@ -60,7 +60,7 @@ public class AdminController {
         model.addAttribute("totalUsers", users.size());
         model.addAttribute("adminCount", adminCount);
 
-        return "admin";
+        return "admin/admin";
     }
 
     @GetMapping("/admin/test")
@@ -124,7 +124,7 @@ public class AdminController {
 
     @GetMapping("/admin/users/new")
     public String newUserPage() {
-        return "admin-user-create";
+        return "admin/admin-user-create";
     }
 
     @PostMapping("/admin/users/{id}/role")

@@ -172,6 +172,6 @@ public class ReportPageController {
             }
         }
 
-        return "reports";
+        return "report/reports";
     }
 }
